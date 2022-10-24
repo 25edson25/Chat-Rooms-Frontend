@@ -4,7 +4,17 @@
     height: 100vh;
     display: grid;
     grid-template-rows: min-content 1fr min-content;
+    grid-template-columns: 2fr 3fr;
     font-family: 'Courier New', Courier, monospace;
+}
+
+nav {
+    grid-area: 1 / 1 / 2 / 3;
+}
+
+.banner {
+    background-color: variables.$light-blue;
+    grid-area: 2 / 1 / 3 / 2;
 }
 
 main {
@@ -13,13 +23,11 @@ main {
     display: flex;
     align-items: center;
     justify-content: center;
+    grid-area: 2 / 2 / 3 / 3;
 }
 
-.banner {
-    background-color: variables.$light-blue;
-    width: 100%;
-    height: 100%;
-    flex: 2;
+footer {
+    grid-area: 3 / 1 / 4 / 3;
 }
 
 .register {

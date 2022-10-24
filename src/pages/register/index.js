@@ -7,10 +7,8 @@ function Register () {
     return (
         <div className={s['container']}>
             <nav><NavBar page="register"/></nav>
+            <div className={s['banner']}></div>
             <main>
-                <div className={s['banner']}>
-
-                </div>
                 <div className={s['register']}>
                     <span className={[s['label'], s['text']].join(' ')}>
                         Registre-se

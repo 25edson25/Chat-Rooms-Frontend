@@ -1,0 +1,18 @@
+@use "../../utils/variables.module.scss";
+
+body {
+    margin: 0px;
+}
+
+#footer {
+    display: flex;
+    margin: 0px;
+    padding: 0.5rem;
+    font-family: 'Courier New', Courier, monospace;
+    background-color: variables.$blue;
+    justify-content: center;
+}
+
+#text {
+    margin: 0px;
+}

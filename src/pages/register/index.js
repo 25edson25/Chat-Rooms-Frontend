@@ -23,8 +23,11 @@ function Register () {
         setDuplicatedEmail(false)
 
         api.post('/person', {name, email, password})
-        .then((res) => {
-            console.log(res.data)
+        .then((_) => {
+            api.post('/login', {email, password})
+            .then((res) => {
+                console.log(res.data)
+            })
         })
         .catch((err) => {
             const message = err.response.data.message

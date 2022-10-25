@@ -3,7 +3,8 @@ import Footer from "../../components/footer"
 import ErrorMessage from "../../components/errorMessage"
 import s from "./style.module.scss"
 import api from "../../resources/api"
-import { useState } from "react"
+import { useContext, useState } from "react"
+import UserContext from "../../context/user"
 
 
 function Login () {
@@ -13,6 +14,7 @@ function Login () {
     const [wrongPassword, setWrongPassword] = useState(false)
     const [notFound, setNotFound] = useState(false)
     const [unknownError, setUnknownError] = useState(false)
+    const {setUser} = useContext(UserContext)
 
     function onSubmit (e) {
         e.preventDefault()
@@ -21,14 +23,15 @@ function Login () {
         setUnknownError(false)
 
         api.post('/login', {email, password})
-        .then((e)=>{
-            console.log(e.data)
+        .then((res)=>{
+            console.log(res.data)
+            setUser(res.data)
         })
         .catch((err)=>{
             const message = err.response.data.message
 
             if (message === "user not found")
-                setNotFound(true)
+                return setNotFound(true)
             
             if (message === "incorrect password")
                 setWrongPassword(true)
@@ -70,7 +73,12 @@ function Login () {
                         value={password}
                     />
                 </div>
-                <button>Entrar</button>
+                <div className={s['confirm']}>
+                    <ErrorMessage visible={unknownError}>
+                        Erro Desconhecido
+                    </ErrorMessage>
+                    <button className={s['button']}>Entrar</button>
+                </div>
             </form>
             <footer><Footer/></footer>
         </div>

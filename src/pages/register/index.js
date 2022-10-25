@@ -2,8 +2,9 @@ import Footer from "../../components/footer"
 import NavBar from "../../components/navbar"
 import s from "./style.module.scss"
 import api from "../../resources/api"
-import { useState } from "react"
+import { useContext, useState } from "react"
 import ErrorMessage from "../../components/errorMessage"
+import UserContext from "../../context/user"
 
 function Register () {
     
@@ -14,6 +15,7 @@ function Register () {
     const [duplicatedEmail, setDuplicatedEmail] = useState(false)
     const [missingEmail, setMissingEmail] = useState(false)
     const [missingPassword, setMissingPassword] = useState(false)
+    const {setUser} = useContext(UserContext)
 
     function onSubmit (e) {
         e.preventDefault()
@@ -26,7 +28,7 @@ function Register () {
         .then((_) => {
             api.post('/login', {email, password})
             .then((res) => {
-                console.log(res.data)
+                setUser(res.data)
             })
         })
         .catch((err) => {
@@ -91,7 +93,7 @@ function Register () {
                         value={password}
                     />
                 </div>
-                <button>Cadastrar</button>
+                <button className={s['button']}>Cadastrar</button>
             </form>
             <footer><Footer/></footer>
         </div>

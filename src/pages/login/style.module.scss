@@ -38,9 +38,7 @@ footer {
     width: 20rem;
 }
 
-button {
-    margin: 2rem;
-    margin-left: 6rem;
+.button {
     width: 7.5rem;
     height: 2.7rem;
     font-size: 1.1rem;
@@ -49,6 +47,14 @@ button {
     background-color: variables.$blue;
     color: white;
     font-weight: bold;
+}
+
+.confirm {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin: 2rem;
+    margin-left: 6rem;
 }
 
 .text {

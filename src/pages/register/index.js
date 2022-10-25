@@ -15,7 +15,7 @@ function Register () {
     const [duplicatedEmail, setDuplicatedEmail] = useState(false)
     const [missingEmail, setMissingEmail] = useState(false)
     const [missingPassword, setMissingPassword] = useState(false)
-    const {setUser} = useContext(UserContext)
+    const {user, setUser} = useContext(UserContext)
 
     function onSubmit (e) {
         e.preventDefault()
@@ -29,6 +29,7 @@ function Register () {
             api.post('/login', {email, password})
             .then((res) => {
                 setUser(res.data)
+                localStorage.setItem('user', JSON.stringify(user))
             })
         })
         .catch((err) => {

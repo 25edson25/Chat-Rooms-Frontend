@@ -12,7 +12,7 @@ import UserContext from "./context/user"
 
 function App() {
   
-  const [user, setUser] = useState(null)
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')))
 
   return (
     <UserContext.Provider value={{user, setUser}}>

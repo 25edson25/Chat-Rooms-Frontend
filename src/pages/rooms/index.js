@@ -1,7 +1,7 @@
 function Rooms () {
     return (
         <div>
-            <h1>Rooms</h1>
+            <h1>Logado</h1>
         </div>
     )
 }

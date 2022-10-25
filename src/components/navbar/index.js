@@ -1,13 +1,14 @@
+import { Link } from "react-router-dom"
 import s from "./style.module.scss"
 
 function NavBar ({page}) {
 
     function link() {
         if (page === 'login')
-            return 'Cadastre-se'
+            return <Link to="/register" className={s['link']}>Cadastre-se</Link>
         
         if (page === 'register')
-            return 'Login'
+            return <Link to="/login" className={s['link']}>Login</Link>
     }
 
     return (

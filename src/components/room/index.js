@@ -1,6 +1,7 @@
 import s from "./style.module.scss"
 
-function Room ({room}) {
+function Room ({password, room}) {
+
     return (
         <div className={s['room']}>
             <span className={s['code']}>{room.code}</span>

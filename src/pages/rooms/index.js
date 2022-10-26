@@ -1,20 +1,22 @@
 import NavBar from "../../components/navbar"
 import Footer from "../../components/footer"
+import ErrorMessage from "../../components/errorMessage"
 import s from "./style.module.scss"
 import UserContext from "../../context/user"
 import { useContext, useEffect, useState } from "react"
 import api from "../../resources/api"
 import Room from "../../components/room"
-
+import connect from "../../resources/socket"
 
 function Rooms () {
     const {user, setUser} = useContext(UserContext)
     const [roomPassword, setRoomPassword] = useState("")
     const [roomName, setRoomName] = useState("")
     const [rooms, setRooms] = useState([])
+    const [missingName, setMissingName] = useState(false)
+    const [wrongPassword, setWrongPassword] = useState(false)
 
     useEffect(()=>{
-        console.log(user.token)
         api.get('/room', {
             headers: {
                 Authorization: 'Bearer ' + user.token
@@ -29,6 +31,33 @@ function Rooms () {
         })
     },[user.token])
 
+    function createRoom() {
+        const socket = connect(user.token, {
+            name: roomName,
+            password: roomPassword || null
+        })
+
+        socket.on('connect_error', (err) => {
+            if (err.message === "room name is required")
+                return setMissingName(true)
+            
+            socket.disconnect()
+        })
+    }
+
+    function enterRoom(room) {
+        return () => {
+            const socket = connect(user.token, {
+                code: room.code,
+                password: roomPassword || null
+            })
+
+            socket.on('connect_error', (err) => {
+                if (err.message === "incorrect password")
+                    return setWrongPassword(true)
+            })
+        }
+    }
 
     return (
         <div className={s["container"]}>
@@ -51,6 +80,9 @@ function Rooms () {
                         />
                     </div>
                     <div className={s['label']}>
+                        <ErrorMessage visible={missingName}>
+                            Campo obrigatório
+                        </ErrorMessage>
                         <label>Nome da Sala</label>
                         <input
                             className={s['input']}
@@ -61,6 +93,9 @@ function Rooms () {
                         />
                     </div>
                     <div className={s['label']}>
+                        <ErrorMessage visible={wrongPassword}>
+                            Senha Incorreta
+                        </ErrorMessage>
                         <label>Senha da Sala</label>
                         <input
                             className={s['input']}
@@ -72,12 +107,19 @@ function Rooms () {
                         />
                     </div>
                     <div className={s['button']}>
-                        <button>Criar Sala</button>
+                        <button onClick={createRoom}>Criar Sala</button>
                     </div>
                 </div>
                 <div className={s['rooms']}>
                     {rooms.map((room) => {
-                        return <Room key={room.code} room={room}/>
+                        return (
+                            <div onClick={enterRoom(room)} key={room.code}>
+                                <Room
+                                    password={roomPassword}
+                                    room={room}
+                                />
+                            </div>
+                        )
                     })}
                 </div>
             </main>

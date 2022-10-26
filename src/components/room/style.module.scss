@@ -1,0 +1,29 @@
+@use "../../utils/variables.module.scss";
+
+.room{
+    display: flex;
+    background-color: white;
+    justify-content: space-between;
+    height: 3rem;
+    margin: 0.5rem;
+    border-radius: 1rem;
+    align-items: stretch;
+    cursor: pointer;
+}
+
+.code {
+    border-radius: 1rem 0rem 0rem 1rem;
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    background-color: variables.$blue;
+    color: white;
+}
+
+.name {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    margin-right: auto;
+    color: variables.$dark-blue;
+}

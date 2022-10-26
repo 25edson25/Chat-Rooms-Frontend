@@ -28,7 +28,11 @@ function App() {
               <Navigate to='/rooms'/>:
               <Login/>
           }/>
-          <Route path="/rooms" element={<Rooms/>}/>
+          <Route path="/rooms" element={
+            user?
+              <Rooms/>:
+              <Login/>
+          }/>
         </Routes>
       </Router>
     </UserContext.Provider>

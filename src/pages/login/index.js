@@ -34,7 +34,7 @@ function Login () {
                 return setNotFound(true)
             
             if (message === "incorrect password")
-                setWrongPassword(true)
+                return setWrongPassword(true)
             
             setUnknownError(true)
         })

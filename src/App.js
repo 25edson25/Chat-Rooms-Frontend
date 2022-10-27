@@ -1,6 +1,7 @@
 import Login from "./pages/login";
 import Register from "./pages/register/index"
 import Rooms from "./pages/rooms";
+import Room from "./pages/room/";
 import {
   BrowserRouter as Router,
   Routes,
@@ -20,18 +21,30 @@ function App() {
         <Routes>
           <Route path="/register" element={
             user?
-              <Navigate to='/rooms'/>:
+              <Navigate to='/rooms'/>
+            :
               <Register/>
           }/>
           <Route path="/login" element={
             user?
-              <Navigate to='/rooms'/>:
+              <Navigate to='/rooms'/>
+            :
               <Login/>
           }/>
           <Route path="/rooms" element={
             user?
-              <Rooms/>:
-              <Login/>
+              <Rooms/>
+            :
+              <Navigate to='/login'/>
+          }/>
+          <Route path='/room/:roomCode' element={
+            user?
+              user.socket?
+                <Room/>
+              :
+                <Navigate to='/rooms'/>
+            :
+              <Navigate to='/login'/>
           }/>
         </Routes>
       </Router>

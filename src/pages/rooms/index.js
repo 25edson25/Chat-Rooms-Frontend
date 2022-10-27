@@ -7,6 +7,7 @@ import { useContext, useEffect, useState } from "react"
 import api from "../../resources/api"
 import Room from "../../components/room"
 import connect from "../../resources/socket"
+import { useNavigate } from "react-router-dom"
 
 function Rooms () {
     const {user, setUser} = useContext(UserContext)
@@ -15,6 +16,8 @@ function Rooms () {
     const [rooms, setRooms] = useState([])
     const [missingName, setMissingName] = useState(false)
     const [wrongPassword, setWrongPassword] = useState(false)
+    const [roomNotFound, setRoomNotFound] = useState(false)
+    const navigate = useNavigate()
 
     useEffect(()=>{
         api.get('/room', {
@@ -36,12 +39,16 @@ function Rooms () {
             name: roomName,
             password: roomPassword || null
         })
-
         socket.on('connect_error', (err) => {
+            socket.disconnect()
+
             if (err.message === "room name is required")
                 return setMissingName(true)
-            
-            socket.disconnect()
+
+        })
+        socket.on('has_entered', (message)=>{
+            setUser({...user, socket})
+            return navigate(`/room/${message.roomCode}`)
         })
     }
 
@@ -53,8 +60,15 @@ function Rooms () {
             })
 
             socket.on('connect_error', (err) => {
+                console.log(err.message)
+                if (err.message === "room not found")
+                    return setRoomNotFound(true)
                 if (err.message === "incorrect password")
                     return setWrongPassword(true)
+            })
+            socket.on('has_entered', (message) => {
+                setUser({...user, socket})
+                return navigate(`/room/${message.roomCode}`)
             })
         }
     }
@@ -113,7 +127,14 @@ function Rooms () {
                 <div className={s['rooms']}>
                     {rooms.map((room) => {
                         return (
-                            <div onClick={enterRoom(room)} key={room.code}>
+                            <div
+                                key={room.code}
+                                onClick={enterRoom(room)}
+                                className={s['room']}
+                            >
+                                <ErrorMessage visible={roomNotFound}>
+                                    Sala não encontrada
+                                </ErrorMessage>
                                 <Room
                                     password={roomPassword}
                                     room={room}

@@ -31,27 +31,41 @@ function Rooms () {
         .catch((err)=>{
             const message = err.response.data.message
             if (message === "Failed to authenticate token") {
-                setUser(null)
                 localStorage.clear('user')
+                setUser(null)
             }
         })
     },[user.token, setUser])
 
-    function updateName() {
-        api.put(`/person/${user.person.id}`, {
-            name: user.person.name
-        }, {
-            headers: {
-                Authorization: 'Bearer ' + user.token    
-            }
-        })
-        .then((res)=>{
-            console.log(res.data)
-        })
+    async function updateName() {
+        let hasError
+
+        try {
+            await api.put(`/person/${user.person.id}`, {
+                    name: user.person.name
+                }, {
+                    headers: {
+                        Authorization: 'Bearer ' + user.token    
+                    }
+            })
+            hasError = false
+        }
+        catch (error) {
+            hasError = true
+        }
+
+        return hasError
     }
 
-    function createRoom() {
-        updateName()
+    async function createRoom() {
+        
+        const hasError = await updateName()
+
+        if (hasError) {
+            localStorage.clear('user')
+            return setUser(null)
+        }
+
         const socket = connect(user.token, {
             name: roomName,
             password: roomPassword || null
@@ -71,7 +85,10 @@ function Rooms () {
 
     function enterRoom(room) {
         return () => {
-            updateName()
+            if (updateName()) {
+                localStorage.clear('user')
+                return setUser(null)
+            }
 
             const socket = connect(user.token, {
                 code: room.code,
@@ -79,7 +96,6 @@ function Rooms () {
             })
 
             socket.on('connect_error', (err) => {
-                console.log(err.message)
                 if (err.message === "room not found")
                     return setRoomNotFound(true)
                 if (err.message === "incorrect password")

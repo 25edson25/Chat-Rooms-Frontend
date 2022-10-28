@@ -38,7 +38,7 @@ function Rooms () {
     },[user.token, setUser])
 
     async function updateName() {
-        let hasError
+        let unauthorized
 
         try {
             await api.put(`/person/${user.person.id}`, {
@@ -48,28 +48,35 @@ function Rooms () {
                         Authorization: 'Bearer ' + user.token    
                     }
             })
-            hasError = false
+            unauthorized = false
         }
-        catch (error) {
-            hasError = true
+        catch (err) {
+            if (err.response.data.message === "Failed to authenticate token")
+                unauthorized = true
+            else
+                unauthorized = false
         }
 
-        return hasError
+        return unauthorized
     }
 
     async function createRoom() {
         
-        const hasError = await updateName()
+        const unauthorized = await updateName()
 
-        if (hasError) {
+        if (unauthorized) {
             localStorage.clear('user')
             return setUser(null)
         }
 
-        const socket = connect(user.token, {
-            name: roomName,
-            password: roomPassword || null
-        })
+        const socket = connect(user.token,
+            roomPassword? {
+                name: roomName,
+                password: roomPassword
+            }
+            : {
+                name: roomName
+            })
         socket.on('connect_error', (err) => {
             socket.disconnect()
 
@@ -84,8 +91,10 @@ function Rooms () {
     }
 
     function enterRoom(room) {
-        return () => {
-            if (updateName()) {
+        return async () => {
+            const unauthorized = await updateName()
+
+            if (unauthorized) {
                 localStorage.clear('user')
                 return setUser(null)
             }

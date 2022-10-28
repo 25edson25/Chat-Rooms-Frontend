@@ -29,12 +29,29 @@ function Rooms () {
             setRooms(res.data)
         })
         .catch((err)=>{
-            console.log("deu erro")
-            console.log(err)
+            const message = err.response.data.message
+            if (message === "Failed to authenticate token") {
+                setUser(null)
+                localStorage.clear('user')
+            }
         })
-    },[user.token])
+    },[user.token, setUser])
+
+    function updateName() {
+        api.put(`/person/${user.person.id}`, {
+            name: user.person.name
+        }, {
+            headers: {
+                Authorization: 'Bearer ' + user.token    
+            }
+        })
+        .then((res)=>{
+            console.log(res.data)
+        })
+    }
 
     function createRoom() {
+        updateName()
         const socket = connect(user.token, {
             name: roomName,
             password: roomPassword || null
@@ -54,6 +71,8 @@ function Rooms () {
 
     function enterRoom(room) {
         return () => {
+            updateName()
+
             const socket = connect(user.token, {
                 code: room.code,
                 password: roomPassword || null

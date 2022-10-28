@@ -45,7 +45,7 @@ function Login () {
 
     return (
         <div className={s["container"]}>
-            <nav><NavBar page='login'/></nav>
+            <nav className={s['nav']}><NavBar page='login'/></nav>
             <div className={s['banner']}></div>
             <form onSubmit={onSubmit}>
                 <span className={[s['label'], s['text']].join(' ')}>
@@ -80,7 +80,7 @@ function Login () {
                     <button className={s['button']}>Entrar</button>
                 </div>
             </form>
-            <footer><Footer/></footer>
+            <footer className={s['footer']}><Footer/></footer>
         </div>
     )
 }

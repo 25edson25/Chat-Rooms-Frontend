@@ -52,7 +52,7 @@ function Register () {
 
     return (
         <div className={s['container']}>
-            <nav><NavBar page="register"/></nav>
+            <nav className={s['nav']}><NavBar page="register"/></nav>
             <div className={s['banner']}></div>
             <form onSubmit={onSubmit}>
                 <span className={[s['label'], s['text']].join(' ')}>
@@ -96,7 +96,7 @@ function Register () {
                 </div>
                 <button className={s['button']}>Cadastrar</button>
             </form>
-            <footer><Footer/></footer>
+            <footer className={s['footer']}><Footer/></footer>
         </div>
     )
 }

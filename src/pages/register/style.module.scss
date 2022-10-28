@@ -8,7 +8,7 @@
     font-family: 'Courier New', Courier, monospace;
 }
 
-nav {
+.nav {
     grid-area: 1 / 1 / 2 / 3;
 }
 
@@ -25,7 +25,7 @@ form {
     justify-content: center;
 }
 
-footer {
+.footer {
     grid-area: 3 / 1 / 4 / 3;
 }
 

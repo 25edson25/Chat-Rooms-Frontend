@@ -1,0 +1,17 @@
+@use "../../utils/variables.module.scss";
+
+.message {
+    display: flex;
+    flex-direction: column;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.sender {
+    color: variables.$orange;
+}
+
+.text {
+    background-color: blue;
+    border-radius: 1rem;
+    padding: 1rem;
+}

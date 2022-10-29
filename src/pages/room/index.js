@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import Footer from "../../components/footer"
 import NavBar from "../../components/navbar"
+import Message from "../../components/message"
 import UserContext from "../../context/user"
 import s from "./style.module.scss"
 import api from "../../resources/api"
@@ -58,7 +59,16 @@ function Room () {
                 </div>
                 <div className={s['chat']}>
                     {messages.map((msg) => {
-                        return <span key={msg.id}>{msg.message}</span>
+                        return (
+                            <div
+                                key={msg.id}
+                                className={s['message']}
+                            >
+                                <Message>
+                                    {msg}
+                                </Message>
+                            </div>
+                        )
                     })}                    
                 </div>
                 <form

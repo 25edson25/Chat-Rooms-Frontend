@@ -122,7 +122,7 @@ function Rooms () {
             socket.on('has_entered', (message) => {
                 setUser({
                     ...user,
-                    person: {...user.name, name},
+                    person: {...user.person, name},
                     socket
                 })
                 localStorage.setItem('user', JSON.stringify({
@@ -182,6 +182,11 @@ function Rooms () {
                         <button onClick={createRoom}>Criar Sala</button>
                     </div>
                 </div>
+                <div className={s['error-message']}>
+                    <ErrorMessage visible={roomNotFound}>
+                        Sala não encontrada
+                    </ErrorMessage>
+                </div>
                 <div className={s['rooms']}>
                     {rooms.map((room) => {
                         return (
@@ -190,9 +195,6 @@ function Rooms () {
                                 onClick={enterRoom(room)}
                                 className={s['room']}
                             >
-                                <ErrorMessage visible={roomNotFound}>
-                                    Sala não encontrada
-                                </ErrorMessage>
                                 <Room
                                     password={roomPassword}
                                     room={room}

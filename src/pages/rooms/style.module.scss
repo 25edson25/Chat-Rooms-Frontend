@@ -31,7 +31,6 @@ nav {
     align-items: flex-end;
     flex: 1;
     margin: 3rem;
-    margin-bottom: 0;
 }
 
 .label {
@@ -47,10 +46,15 @@ nav {
     border-radius: 1rem;
 }
 
+.error-message{
+    margin-left: 3rem;
+}
+
 .rooms {
     overflow-y: scroll;
+    max-height: 20rem;
     margin: 3rem;
-    margin-top: 2rem;
+    margin-top: 0rem;
     margin-bottom: 2rem;
     background-color: variables.$light-blue;
     display: flex;

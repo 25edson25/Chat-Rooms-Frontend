@@ -24,7 +24,7 @@ function Login () {
 
         api.post('/login', {email, password})
         .then((res)=>{
-            localStorage.setItem('user', JSON.stringify(res.data))  
+            localStorage.setItem('user', JSON.stringify(res.data))
             setUser(res.data)
         })
         .catch((err)=>{

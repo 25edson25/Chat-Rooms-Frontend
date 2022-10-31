@@ -11,10 +11,12 @@ import { useNavigate } from "react-router-dom"
 
 function Rooms () {
     const {user, setUser} = useContext(UserContext)
+    const [name, setName] = useState(user.person.name)
     const [roomPassword, setRoomPassword] = useState("")
     const [roomName, setRoomName] = useState("")
     const [rooms, setRooms] = useState([])
     const [missingName, setMissingName] = useState(false)
+    const [missingRoomName, setMissingRoomName] = useState(false)
     const [wrongPassword, setWrongPassword] = useState(false)
     const [roomNotFound, setRoomNotFound] = useState(false)
     const navigate = useNavigate()
@@ -38,35 +40,41 @@ function Rooms () {
     },[user.token, setUser])
 
     async function updateName() {
-        let unauthorized
+        let hasError
 
         try {
-            await api.put(`/person/${user.person.id}`, {
-                    name: user.person.name
-                }, {
+            const res = await api.put(`/person/${user.person.id}`, {name}, {
                     headers: {
                         Authorization: 'Bearer ' + user.token    
                     }
             })
-            unauthorized = false
+            console.log(res)
+            setUser({...user, person:{...user.person, name: res.data.name}})
+            localStorage.setItem('user', JSON.stringify(user))
+            hasError = false
         }
         catch (err) {
-            if (err.response.data.message === "Failed to authenticate token")
-                unauthorized = true
-            else
-                unauthorized = false
+            console.log(err)
+            if (err.response.data.message === "name can't be empty")
+                setMissingName(true)
+
+            if (err.response.data.message === "Failed to authenticate token") {
+                localStorage.clear('user')
+                setUser(null)
+            }
+
+            hasError = true
         }
 
-        return unauthorized
+        return hasError
     }
 
     async function createRoom() {
         
-        const unauthorized = await updateName()
+        const hasError = await updateName()
 
-        if (unauthorized) {
-            localStorage.clear('user')
-            return setUser(null)
+        if (hasError) {
+            return hasError
         }
 
         const socket = connect(user.token,
@@ -81,11 +89,12 @@ function Rooms () {
             socket.disconnect()
 
             if (err.message === "room name is required")
-                return setMissingName(true)
+                return setMissingRoomName(true)
 
         })
         socket.on('has_entered', (message)=>{
-            setUser({...user, socket})
+            setUser({...user, person: {...user.person, name}, socket})
+            localStorage.setItem('user', JSON.stringify(user))
             return navigate(`/room/${message.roomCode}`)
         })
     }
@@ -111,7 +120,15 @@ function Rooms () {
                     return setWrongPassword(true)
             })
             socket.on('has_entered', (message) => {
-                setUser({...user, socket})
+                setUser({
+                    ...user,
+                    person: {...user.name, name},
+                    socket
+                })
+                localStorage.setItem('user', JSON.stringify({
+                    token: user.token,
+                    person: user.person
+                }))
                 return navigate(`/room/${message.roomCode}`)
             })
         }
@@ -124,21 +141,18 @@ function Rooms () {
             <main className={s['main']}>
                 <div className={s['form']}>
                     <div className={s['label']}>
+                        <ErrorMessage visible={missingName}>
+                            Campo obrigatório
+                        </ErrorMessage>
                         <label>Nome de usuário</label>
                         <input
-                            onChange={(e)=>{
-                                setUser({
-                                    token:user.token, 
-                                    person: {...user.person, name: e.target.value}
-                                })
-                                localStorage.setItem('user', JSON.stringify(user))
-                            }}
-                            value={user.person.name}
+                            onChange={(e)=>{setName(e.target.value)}}
+                            value={name}
                             className={s['input']}
                         />
                     </div>
                     <div className={s['label']}>
-                        <ErrorMessage visible={missingName}>
+                        <ErrorMessage visible={missingRoomName}>
                             Campo obrigatório
                         </ErrorMessage>
                         <label>Nome da Sala</label>

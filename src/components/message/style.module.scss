@@ -1,17 +1,27 @@
 @use "../../utils/variables.module.scss";
 
-.message {
+.receiver {
     display: flex;
     flex-direction: column;
     font-family: 'Courier New', Courier, monospace;
 }
 
 .sender {
-    color: variables.$orange;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Courier New', Courier, monospace;
+    align-items: flex-end;
+}
+
+.name {
+    color: variables.$dark-blue;
+    font-weight: bold;
 }
 
 .text {
-    background-color: blue;
+    background-color: white;
+    width: fit-content;
     border-radius: 1rem;
     padding: 1rem;
+    color: variables.$dark-blue;
 }

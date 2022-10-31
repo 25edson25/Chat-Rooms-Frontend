@@ -1,9 +1,19 @@
 import s from "./style.module.scss"
+import UserContext from "../../context/user"
+import { useContext } from "react"
 
 function Message ({children: msg}) {
+
+    const {user} = useContext(UserContext)
+
     return (
-        <div className={s['message']}>
-            <span className={s['sender']}>{msg.senderName}</span>
+        <div className={
+            (msg.senderId === user.person.id)?
+                s['sender']
+            :
+                s['receiver']
+        }>
+            <span className={s['name']}>{msg.senderName}</span>
             <span className={s['text']}>{msg.message}</span>
         </div>
     )

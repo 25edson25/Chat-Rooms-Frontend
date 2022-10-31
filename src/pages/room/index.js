@@ -21,15 +21,16 @@ function Room () {
         setMessage("")
     }
 
-    user.socket.on('response', (res) => {
-        setMessages([...messages, res])
-    })
-
     function leaveRoom(e) {
         e.preventDefault()
         user.socket.disconnect()
-        setUser({token: user.token, person: user.person})
+
+        setUser({token: user.token, person: user.person})   
     }
+
+    user.socket.on('response', (res) => {
+        setMessages([...messages, res])
+    })
 
     useEffect(()=>{
         api.get(`/room/${roomCode}/message`, {

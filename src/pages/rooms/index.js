@@ -19,15 +19,18 @@ function Rooms () {
     const [missingRoomName, setMissingRoomName] = useState(false)
     const [wrongPassword, setWrongPassword] = useState(false)
     const [roomNotFound, setRoomNotFound] = useState(false)
+    const [refresh, setRefresh] = useState(0)
     const navigate = useNavigate()
 
     useEffect(()=>{
+        console.log("rodou")
         api.get('/room', {
             headers: {
                 Authorization: 'Bearer ' + user.token
             }
         })
         .then((res)=>{
+            setRoomNotFound(false)
             setRooms(res.data)
         })
         .catch((err)=>{
@@ -37,7 +40,7 @@ function Rooms () {
                 setUser(null)
             }
         })
-    },[user.token, setUser])
+    },[user.token, setUser, refresh])
 
     async function updateName() {
         let hasError
@@ -48,7 +51,6 @@ function Rooms () {
                         Authorization: 'Bearer ' + user.token    
                     }
             })
-            console.log(res)
             setUser({...user, person:{...user.person, name: res.data.name}})
             localStorage.setItem('user', JSON.stringify(user))
             hasError = false
@@ -182,10 +184,19 @@ function Rooms () {
                         <button onClick={createRoom}>Criar Sala</button>
                     </div>
                 </div>
-                <div className={s['error-message']}>
+                <div className={s['header']}>
                     <ErrorMessage visible={roomNotFound}>
                         Sala não encontrada
                     </ErrorMessage>
+                    <span 
+                        className={s['refresh']}
+                        onClick={(e) => {   
+                            e.preventDefault()
+                            setRefresh((refresh + 1) % 2)
+                        }}
+                    >    
+                        Atualizar
+                    </span>
                 </div>
                 <div className={s['rooms']}>
                     {rooms.map((room) => {

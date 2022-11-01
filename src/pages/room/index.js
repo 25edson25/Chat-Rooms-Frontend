@@ -59,7 +59,7 @@ function Room () {
                     <span className={s['empty']}/>
                 </div>
                 <div className={s['chat']}>
-                    {messages.map((msg) => {
+                    {messages.slice(0).reverse().map((msg) => {
                         return (
                             <div
                                 key={msg.id}

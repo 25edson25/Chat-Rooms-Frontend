@@ -6,6 +6,8 @@ import Message from "../../components/message"
 import UserContext from "../../context/user"
 import s from "./style.module.scss"
 import api from "../../resources/api"
+import connect from "../../resources/socket"
+
 
 function Room () {
 
@@ -14,6 +16,30 @@ function Room () {
     const [messages, setMessages] = useState([])
     const {user, setUser} = useContext(UserContext)
     const navigate = useNavigate()
+
+
+    useEffect(()=>{
+        console.log(user)
+
+        if (user.socket) {
+            console.log("tem socket")
+            user.socket.on('response', (res) => {
+                setMessages([...messages, res])
+            })
+            return;
+        }
+        if(!user.socket && roomCode === user.room.code) {
+            console.log("não tem socket")
+            const socket = connect(user.token, {
+                code: user.room.code,
+                password: user.room.password || null
+            })
+            socket.emit('reconnected', user.person)
+
+            setUser({...user, socket})
+        }
+
+    }, [user, messages, roomCode, setUser])
 
     function sendMessage(e) {
         e.preventDefault()
@@ -25,12 +51,10 @@ function Room () {
         e.preventDefault()
         user.socket.disconnect()
 
-        setUser({token: user.token, person: user.person})   
+        const newUser = {token: user.token, person: user.person}
+        setUser(newUser)   
+        localStorage.setItem('user', JSON.stringify(newUser))
     }
-
-    user.socket.on('response', (res) => {
-        setMessages([...messages, res])
-    })
 
     useEffect(()=>{
         api.get(`/room/${roomCode}/message`, {
@@ -39,11 +63,21 @@ function Room () {
             }
         })
         .then((res) => {
-            setMessages(res.data)
+            
+            setMessages(res.data.map(message => {
+                console.log(message)
+                return {
+                    id: message.id,
+                    message: message.message,
+                    hour: message.hour,
+                    senderName: message.Sender.name,
+                    senderId: message.Sender.id
+                }
+            }))
         })
         .catch((err) => {
             const message = err.response.data.message
-
+            console.log(message)
             if (message === "unauthorized" || message === "person not in a room")
                 return navigate('/rooms')
         })

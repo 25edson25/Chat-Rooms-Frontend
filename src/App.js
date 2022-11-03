@@ -39,7 +39,7 @@ function App() {
           }/>
           <Route path='/room/:roomCode' element={
             user?
-              user.socket?
+              user.room?
                 <Room/>
               :
                 <Navigate to='/rooms'/>

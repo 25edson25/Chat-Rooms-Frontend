@@ -86,7 +86,8 @@ function Rooms () {
             }
             : {
                 name: roomName
-            })
+            }
+        )
         socket.on('connect_error', (err) => {
             socket.disconnect()
 
@@ -94,10 +95,20 @@ function Rooms () {
                 return setMissingRoomName(true)
 
         })
-        socket.on('has_entered', (message)=>{
-            setUser({...user, person: {...user.person, name}, socket})
-            localStorage.setItem('user', JSON.stringify(user))
-            return navigate(`/room/${message.roomCode}`)
+        socket.on('has_entered', (res)=>{
+            const newUser = {
+                token: user.token,
+                person: {...user.person, name},
+                room: {code: res.roomCode, password: roomPassword}
+            }
+            localStorage.setItem('user', JSON.stringify(newUser))
+            
+            setUser({
+                ...newUser,
+                socket,
+            })
+
+            return navigate(`/room/${res.roomCode}`)
         })
     }
 
@@ -121,18 +132,22 @@ function Rooms () {
                 if (err.message === "incorrect password")
                     return setWrongPassword(true)
             })
-            socket.on('has_entered', (message) => {
-                setUser({
-                    ...user,
-                    person: {...user.person, name},
-                    socket
-                })
-                localStorage.setItem('user', JSON.stringify({
+            socket.on('has_entered', (res) => {
+                const newUser = {
                     token: user.token,
-                    person: user.person
-                }))
-                return navigate(`/room/${message.roomCode}`)
+                    person: {...user.person, name},
+                    room: {code: res.roomCode, password: roomPassword}
+                }
+                localStorage.setItem('user', JSON.stringify(newUser))
+                
+                setUser({
+                    ...newUser,
+                    socket,
+                })
+
+                return navigate(`/room/${res.roomCode}`)
             })
+            
         }
     }
 

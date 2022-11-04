@@ -1,7 +1,7 @@
 import { io } from "socket.io-client"
 
 function connect (token, query) {
-    return io("http://localhost:3001", {
+    return io(process.env.REACT_APP_API_URL, {
         auth: {
             token: "Bearer " + token
         },

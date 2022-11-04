@@ -17,6 +17,8 @@ function Login () {
     const {setUser} = useContext(UserContext)
 
     function onSubmit (e) {
+        const button = e.currentTarget.getElementsByClassName(s['button'])[0]
+        button.disabled = true
         e.preventDefault()
         setWrongPassword(false)
         setNotFound(false)
@@ -38,9 +40,11 @@ function Login () {
             
             setUnknownError(true)
         })
-
-        setEmail("")
-        setPassword("")
+        .finally(()=>{
+            setEmail("")
+            setPassword("")
+            button.disabled = false
+        })
     }
 
     return (
@@ -77,7 +81,11 @@ function Login () {
                     <ErrorMessage visible={unknownError}>
                         Erro Desconhecido
                     </ErrorMessage>
-                    <button className={s['button']}>Entrar</button>
+                    <button
+                        className={s['button']}
+                    >
+                        Entrar
+                    </button>
                 </div>
             </form>
             <footer className={s['footer']}><Footer/></footer>

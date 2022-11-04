@@ -34,6 +34,7 @@ function Login () {
             setUser(res.data)
         })
         .catch((err)=>{
+            console.log(err)
             const message = err.response.data.message
             console.log(message)
 

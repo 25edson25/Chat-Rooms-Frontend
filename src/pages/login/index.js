@@ -35,6 +35,7 @@ function Login () {
         })
         .catch((err)=>{
             const message = err.response.data.message
+            console.log(message)
 
             if (message === "user not found")
                 return setNotFound(true)

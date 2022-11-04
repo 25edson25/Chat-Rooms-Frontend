@@ -1,0 +1,7 @@
+@use "../../utils/variables.module.scss";
+
+.message {
+    font-size: 0.8rem;
+    color: variables.$blue;
+    opacity: 80%;
+}

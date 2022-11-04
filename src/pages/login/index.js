@@ -5,6 +5,7 @@ import s from "./style.module.scss"
 import api from "../../resources/api"
 import { useContext, useState } from "react"
 import UserContext from "../../context/user"
+import LoadingMessage from "../../components/loadingMessage"
 
 
 function Login () {
@@ -14,11 +15,14 @@ function Login () {
     const [wrongPassword, setWrongPassword] = useState(false)
     const [notFound, setNotFound] = useState(false)
     const [unknownError, setUnknownError] = useState(false)
+    const [disabled, setDisbled] = useState(false)
     const {setUser} = useContext(UserContext)
 
     function onSubmit (e) {
         const button = e.currentTarget.getElementsByClassName(s['button'])[0]
         button.disabled = true
+        setDisbled(true)
+
         e.preventDefault()
         setWrongPassword(false)
         setNotFound(false)
@@ -44,6 +48,7 @@ function Login () {
             setEmail("")
             setPassword("")
             button.disabled = false
+            setDisbled(false)
         })
     }
 
@@ -81,6 +86,9 @@ function Login () {
                     <ErrorMessage visible={unknownError}>
                         Erro Desconhecido
                     </ErrorMessage>
+                    <LoadingMessage visible={disabled}>
+                        Carregando
+                    </LoadingMessage>
                     <button
                         className={s['button']}
                     >

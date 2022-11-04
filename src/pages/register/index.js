@@ -1,5 +1,6 @@
 import Footer from "../../components/footer"
 import NavBar from "../../components/navbar"
+import LoadingMessage from "../../components/loadingMessage"
 import s from "./style.module.scss"
 import api from "../../resources/api"
 import { useContext, useState } from "react"
@@ -16,8 +17,13 @@ function Register () {
     const [missingEmail, setMissingEmail] = useState(false)
     const [missingPassword, setMissingPassword] = useState(false)
     const {user, setUser} = useContext(UserContext)
+    const [disabled, setDisabled] = useState(false)
 
     function onSubmit (e) {
+        const button = e.currentTarget.getElementsByClassName(s['button'])[0]
+        button.disabled = true
+        setDisabled(true)
+        
         e.preventDefault()
         setMissingEmail(false)
         setMissingName(false)
@@ -44,10 +50,13 @@ function Register () {
             if (message === "email already in use")
                 return setDuplicatedEmail(true)
         })
-        
-        setName("")
-        setEmail("")
-        setPassword("")
+        .finally(()=> {
+            setName("")
+            setEmail("")
+            setPassword("")
+            button.disabled = false
+            setDisabled(true)
+        })
     }
 
     return (
@@ -87,6 +96,9 @@ function Register () {
                    <ErrorMessage visible={missingPassword}>
                         Campo obrigatório
                     </ErrorMessage>
+                    <LoadingMessage visible={disabled}>
+                        Carregando
+                    </LoadingMessage>
                     <label>Senha:</label>
                     <input
                         type="password"

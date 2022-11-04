@@ -41,15 +41,20 @@ form {
 .button {
     margin: 2rem;
     margin-left: 6rem;
-    width: 7.5rem;
-    height: 2.7rem;
-    font-size: 1.1rem;
-    border-radius: 0.5rem;
-    border: 0;
-    background-color: variables.$blue;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    
+    button {
+        width: 7.5rem;
+        height: 2.7rem;
+        font-size: 1.1rem;
+        border-radius: 0.5rem;
+        border: 0;
+        background-color: variables.$blue;
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+    }
 }
 
 .text {

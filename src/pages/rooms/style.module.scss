@@ -73,8 +73,9 @@ nav {
 
 .button {
     display: flex;
+    flex-direction: column;
     width: 15rem;
-    justify-content: center;
+    align-items: center;
     margin: 0.7rem;
 
     button {

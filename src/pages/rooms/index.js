@@ -8,6 +8,7 @@ import api from "../../resources/api"
 import Room from "../../components/room"
 import connect from "../../resources/socket"
 import { useNavigate } from "react-router-dom"
+import LoadingMessage from "../../components/loadingMessage"
 
 function Rooms () {
     const {user, setUser} = useContext(UserContext)
@@ -20,10 +21,10 @@ function Rooms () {
     const [wrongPassword, setWrongPassword] = useState(false)
     const [roomNotFound, setRoomNotFound] = useState(false)
     const [refresh, setRefresh] = useState(0)
+    const [disabled, setDisabled] = useState(false)
     const navigate = useNavigate()
 
     useEffect(()=>{
-        console.log("rodou")
         api.get('/room', {
             headers: {
                 Authorization: 'Bearer ' + user.token
@@ -71,11 +72,18 @@ function Rooms () {
         return hasError
     }
 
-    async function createRoom() {
-        
+    async function createRoom(e) {
+        const button = e.currentTarget
+        button.disabled = true
+        setDisabled(true)
+
+        e.preventDefault()
+
         const hasError = await updateName()
 
         if (hasError) {
+            e.currentTarget.disabled = false
+            setDisabled(false)
             return hasError
         }
 
@@ -110,6 +118,9 @@ function Rooms () {
 
             return navigate(`/room/${res.roomCode}`)
         })
+
+        button.disabled = false
+        setDisabled(false)
     }
 
     function enterRoom(room) {
@@ -196,6 +207,9 @@ function Rooms () {
                         />
                     </div>
                     <div className={s['button']}>
+                        <LoadingMessage visible={disabled}>
+                            Carregando...
+                        </LoadingMessage>
                         <button onClick={createRoom}>Criar Sala</button>
                     </div>
                 </div>

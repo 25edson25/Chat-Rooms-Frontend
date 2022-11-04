@@ -87,7 +87,7 @@ function Login () {
                         Erro Desconhecido
                     </ErrorMessage>
                     <LoadingMessage visible={disabled}>
-                        Carregando
+                        Carregando...
                     </LoadingMessage>
                     <button
                         className={s['button']}

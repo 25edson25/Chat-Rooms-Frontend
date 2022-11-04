@@ -55,7 +55,7 @@ function Register () {
             setEmail("")
             setPassword("")
             button.disabled = false
-            setDisabled(true)
+            setDisabled(false)
         })
     }
 
@@ -96,9 +96,6 @@ function Register () {
                    <ErrorMessage visible={missingPassword}>
                         Campo obrigatório
                     </ErrorMessage>
-                    <LoadingMessage visible={disabled}>
-                        Carregando
-                    </LoadingMessage>
                     <label>Senha:</label>
                     <input
                         type="password"
@@ -106,7 +103,12 @@ function Register () {
                         value={password}
                     />
                 </div>
-                <button className={s['button']}>Cadastrar</button>
+                <div className={s['button']}>
+                    <LoadingMessage visible={disabled}>
+                            Carregando...
+                    </LoadingMessage>
+                    <button>Cadastrar</button>
+                </div>
             </form>
             <footer className={s['footer']}><Footer/></footer>
         </div>

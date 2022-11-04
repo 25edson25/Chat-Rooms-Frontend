@@ -19,17 +19,13 @@ function Room () {
 
 
     useEffect(()=>{
-        console.log(user)
-
         if (user.socket) {
-            console.log("tem socket")
             user.socket.on('response', (res) => {
                 setMessages([...messages, res])
             })
             return;
         }
         if(!user.socket && roomCode === user.room.code) {
-            console.log("não tem socket")
             const socket = connect(user.token, {
                 code: user.room.code,
                 password: user.room.password || null
@@ -65,7 +61,6 @@ function Room () {
         .then((res) => {
             
             setMessages(res.data.map(message => {
-                console.log(message)
                 return {
                     id: message.id,
                     message: message.message,

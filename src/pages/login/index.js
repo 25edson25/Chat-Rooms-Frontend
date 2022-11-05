@@ -34,13 +34,11 @@ function Login () {
             setUser(res.data)
         })
         .catch((err)=>{
-            console.log(err)
-            const message = err.response.data.message
-            console.log(message)
-
-            if (message === "user not found")
+            const status = err.response.status
+            if (status === 404)
                 return setNotFound(true)
             
+            const message = err.response.data.message
             if (message === "incorrect password")
                 return setWrongPassword(true)
             

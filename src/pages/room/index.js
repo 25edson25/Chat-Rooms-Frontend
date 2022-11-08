@@ -72,7 +72,7 @@ function Room () {
         })
         .catch((err) => {
             const message = err.response.data.message
-            console.log(message)
+            
             if (message === "unauthorized" || message === "person not in a room")
                 return navigate('/rooms')
         })

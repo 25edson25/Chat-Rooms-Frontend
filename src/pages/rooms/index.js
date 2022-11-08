@@ -6,9 +6,10 @@ import UserContext from "../../context/user"
 import { useContext, useEffect, useState } from "react"
 import api from "../../resources/api"
 import Room from "../../components/room"
-import connect from "../../resources/socket"
 import { useNavigate } from "react-router-dom"
 import LoadingMessage from "../../components/loadingMessage"
+import socketio from "../../resources/socket"
+
 
 function Rooms () {
     const {user, setUser} = useContext(UserContext)
@@ -43,122 +44,44 @@ function Rooms () {
         })
     },[user.token, setUser, refresh])
 
-    async function updateName() {
-        let hasError
+    function handleClick(room) {
+        return async (e) => {
+            const button = e.currentTarget
+            button.disabled = true
+            setDisabled(true)
 
-        try {
-            const res = await api.put(`/person/${user.person.id}`, {name}, {
-                    headers: {
-                        Authorization: 'Bearer ' + user.token    
+            const hasError = await api.updateName(user, setUser, name)
+            if (hasError) {
+                setMissingName(hasError.missingName)
+
+                setDisabled(false)
+                return;
+            }
+
+            let socket
+            if (!room)
+                socket = socketio.connect(user.token,
+                    roomPassword? {
+                        name: roomName,
+                        password: roomPassword
                     }
-            })
-            setUser({...user, person:{...user.person, name: res.data.name}})
-            localStorage.setItem('user', JSON.stringify(user))
-            hasError = false
-        }
-        catch (err) {
-            console.log(err)
-            if (err.response.data.message === "name can't be empty")
-                setMissingName(true)
-
-            if (err.response.data.message === "Failed to authenticate token") {
-                localStorage.clear('user')
-                setUser(null)
-            }
-
-            hasError = true
-        }
-
-        return hasError
-    }
-
-    async function createRoom(e) {
-        const button = e.currentTarget
-        button.disabled = true
-        setDisabled(true)
-
-        e.preventDefault()
-
-        const hasError = await updateName()
-
-        if (hasError) {
-            e.currentTarget.disabled = false
-            setDisabled(false)
-            return hasError
-        }
-
-        const socket = connect(user.token,
-            roomPassword? {
-                name: roomName,
-                password: roomPassword
-            }
-            : {
-                name: roomName
-            }
-        )
-        socket.on('connect_error', (err) => {
-            socket.disconnect()
-
-            if (err.message === "room name is required")
-                return setMissingRoomName(true)
-
-        })
-        socket.on('has_entered', (res)=>{
-            const newUser = {
-                token: user.token,
-                person: {...user.person, name},
-                room: {code: res.roomCode, password: roomPassword}
-            }
-            localStorage.setItem('user', JSON.stringify(newUser))
-            
-            setUser({
-                ...newUser,
-                socket,
-            })
-
-            return navigate(`/room/${res.roomCode}`)
-        })
-
-        button.disabled = false
-        setDisabled(false)
-    }
-
-    function enterRoom(room) {
-        return async () => {
-            const unauthorized = await updateName()
-
-            if (unauthorized) {
-                localStorage.clear('user')
-                return setUser(null)
-            }
-
-            const socket = connect(user.token, {
-                code: room.code,
-                password: roomPassword || null
-            })
-
-            socket.on('connect_error', (err) => {
-                if (err.message === "room not found")
-                    return setRoomNotFound(true)
-                if (err.message === "incorrect password")
-                    return setWrongPassword(true)
-            })
-            socket.on('has_entered', (res) => {
-                const newUser = {
-                    token: user.token,
-                    person: {...user.person, name},
-                    room: {code: res.roomCode, password: roomPassword}
-                }
-                localStorage.setItem('user', JSON.stringify(newUser))
-                
-                setUser({
-                    ...newUser,
-                    socket,
+                    : {
+                        name: roomName
+                    }
+                )
+            else 
+                socket = socketio.connect(user.token, {
+                    code: room.code,
+                    password: roomPassword || null
                 })
-
-                return navigate(`/room/${res.roomCode}`)
-            })
             
+            socketio.addHandlers(socket, user, setUser, navigate, {
+                name, setName,
+                roomPassword,
+                setMissingRoomName,
+                setRoomNotFound,
+                setWrongPassword
+            })
         }
     }
 
@@ -210,7 +133,7 @@ function Rooms () {
                         <LoadingMessage visible={disabled}>
                             Carregando...
                         </LoadingMessage>
-                        <button onClick={createRoom}>Criar Sala</button>
+                        <button onClick={handleClick()}>Criar Sala</button>
                     </div>
                 </div>
                 <div className={s['header']}>
@@ -232,7 +155,7 @@ function Rooms () {
                         return (
                             <div
                                 key={room.code}
-                                onClick={enterRoom(room)}
+                                onClick={handleClick(room)}
                                 className={s['room']}
                             >
                                 <Room

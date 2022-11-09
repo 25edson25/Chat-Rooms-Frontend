@@ -8,7 +8,7 @@ import api from "../../resources/api"
 import Room from "../../components/room"
 import { useNavigate } from "react-router-dom"
 import LoadingMessage from "../../components/loadingMessage"
-import socketio from "../../resources/socket"
+import io from "../../resources/socket"
 
 
 function Rooms () {
@@ -36,8 +36,7 @@ function Rooms () {
             setRooms(res.data)
         })
         .catch((err)=>{
-            const message = err.response.data.message
-            if (message === "Failed to authenticate token") {
+            if (err.response.data.message === "Failed to authenticate token") {
                 localStorage.clear('user')
                 setUser(null)
             }
@@ -60,7 +59,7 @@ function Rooms () {
 
             let socket
             if (!room)
-                socket = socketio.connect(user.token,
+                socket = io.connect(user.token,
                     roomPassword? {
                         name: roomName,
                         password: roomPassword
@@ -70,18 +69,22 @@ function Rooms () {
                     }
                 )
             else 
-                socket = socketio.connect(user.token, {
+                socket = io.connect(user.token, {
                     code: room.code,
                     password: roomPassword || null
                 })
             
-            socketio.addHandlers(socket, user, setUser, navigate, {
-                name, setName,
-                roomPassword,
-                setMissingRoomName,
-                setRoomNotFound,
-                setWrongPassword
-            })
+
+            io.addHandlers(socket, [
+                io.hasEntered(socket, user, setUser, navigate, {
+                    name, roomPassword
+                }),
+                io.connectError(socket, {
+                    setMissingRoomName,
+                    setRoomNotFound,
+                    setWrongPassword
+                })
+            ])
         }
     }
 

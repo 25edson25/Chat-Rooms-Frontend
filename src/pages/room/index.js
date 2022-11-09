@@ -6,7 +6,7 @@ import Message from "../../components/message"
 import UserContext from "../../context/user"
 import s from "./style.module.scss"
 import api from "../../resources/api"
-import connect from "../../resources/socket"
+import io from "../../resources/socket"
 
 
 function Room () {
@@ -20,22 +20,24 @@ function Room () {
 
     useEffect(()=>{
         if (user.socket) {
-            user.socket.on('response', (res) => {
-                setMessages([...messages, res])
-            })
+            io.addHandlers(user.socket, [
+                io.messageResponse({
+                    messages, setMessages
+                })
+            ]) 
             return;
         }
         if(!user.socket && roomCode === user.room.code) {
-            const socket = connect(user.token, {
+            const socket = io.connect(user.token, {
                 code: user.room.code,
                 password: user.room.password || null
             })
-            socket.emit('reconnected', user.person)
-
+           
             setUser({...user, socket})
+            socket.emit('reconnected', user.person)
         }
 
-    }, [user, messages, roomCode, setUser])
+    }, [user, messages, roomCode, setUser, navigate])
 
     function sendMessage(e) {
         e.preventDefault()
@@ -59,7 +61,6 @@ function Room () {
             }
         })
         .then((res) => {
-            
             setMessages(res.data.map(message => {
                 return {
                     id: message.id,
@@ -72,7 +73,7 @@ function Room () {
         })
         .catch((err) => {
             const message = err.response.data.message
-            
+
             if (message === "unauthorized" || message === "person not in a room")
                 return navigate('/rooms')
         })

@@ -9,9 +9,8 @@ function connect(token, query) {
     })
 }
 
-function addHandlers(socket, user, setUser, navigate, states) {
-
-    socket.on('has_entered', (res)=>{
+function hasEntered(socket, user, setUser, navigate, states) {
+    return function has_entered (res) {
         const newUser = {
             token: user.token,
             person: {...user.person, name: states.name},
@@ -26,9 +25,11 @@ function addHandlers(socket, user, setUser, navigate, states) {
         })
 
         return navigate(`/room/${res.roomCode}`)
-    })
-    
-    socket.on('connect_error', (err) => {
+    }
+}
+
+function connectError(socket, states) {
+    return function connect_error (err) {
         socket.disconnect()
 
         if (err.message === "room name is required")
@@ -37,9 +38,28 @@ function addHandlers(socket, user, setUser, navigate, states) {
             return states.setRoomNotFound(true)
         if (err.message === "incorrect password")
             return states.setWrongPassword(true)
-    })
+    }
 }
 
-const functions = {addHandlers, connect}
+function messageResponse(states) {
+    return function response (res) {
+        states.setMessages([...states.messages, res])
+    }
+}
+
+function addHandlers(socket, handlers) {
+    for (let handler of handlers) {
+        console.log(handler.name)
+        socket.on(handler.name, handler)
+    }
+}
+
+const functions = {
+    connect,
+    hasEntered,
+    connectError,
+    messageResponse,
+    addHandlers
+}
 
 export default functions

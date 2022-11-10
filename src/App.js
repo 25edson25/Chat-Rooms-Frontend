@@ -10,7 +10,6 @@ import {
 } from "react-router-dom";
 import { useState } from "react";
 import UserContext from "./context/user"
-import Teste from "./pages/test";
 
 function App() {
   
@@ -48,8 +47,7 @@ function App() {
               <Navigate to='/login'/>
           }/>
           <Route path='/' element={
-            //<Navigate  to='/login'/>
-            <Teste/>
+            <Navigate  to='/login'/>
           }/>
         </Routes>
       </Router>

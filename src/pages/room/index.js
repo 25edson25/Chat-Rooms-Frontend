@@ -21,7 +21,7 @@ function Room () {
     
     useEffect(()=>{
         if (socket) {
-            if (messages.length || (socket._callbacks && !socket._callbacks.$response))
+            if (messages.length || !socket._callbacks || !socket._callbacks.$response)
                 io.addHandlers(socket, [
                     io.messageResponse({
                         messages, setMessages

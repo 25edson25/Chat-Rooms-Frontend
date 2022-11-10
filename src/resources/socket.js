@@ -49,10 +49,8 @@ function messageResponse(states) {
 }
 
 function addHandlers(socket, handlers) {
-    for (let handler of handlers) {
-        console.log("adicionando handler: " + handler.name)
+    for (let handler of handlers)
         socket.once(handler.name, handler)
-    }
 }
 
 const functions = {

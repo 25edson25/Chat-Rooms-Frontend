@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react"
+import { useContext, useEffect, useRef, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import Footer from "../../components/footer"
 import NavBar from "../../components/navbar"
@@ -15,69 +15,64 @@ function Room () {
     const [message, setMessage] = useState("")
     const [messages, setMessages] = useState([])
     const {user, setUser} = useContext(UserContext)
+    const [socket, setSocket] = useState(user.socket)
+    const hasReconnected = useRef(false)
     const navigate = useNavigate()
-
-
+    
     useEffect(()=>{
-        if (user.socket) {
-            io.addHandlers(user.socket, [
-                io.messageResponse({
-                    messages, setMessages
-                })
-            ]) 
+        if (socket) {
+            if (messages.length || (socket._callbacks && !socket._callbacks.$response))
+                io.addHandlers(socket, [
+                    io.messageResponse({
+                        messages, setMessages
+                    })
+                ])
+
+            if (hasReconnected.current) {
+                socket.emit('reconnected', user.person)
+                hasReconnected.current = false
+            }
+
             return;
         }
-        if(!user.socket && roomCode === user.room.code) {
-            const socket = io.connect(user.token, {
-                code: user.room.code,
-                password: user.room.password || null
-            })
-           
-            setUser({...user, socket})
-            socket.emit('reconnected', user.person)
+
+        if(roomCode === user.room.code) {
+            setSocket(
+                io.connect(user.token, {
+                    code: user.room.code,
+                    password: user.room.password || null
+                })
+            )
+            hasReconnected.current = true
         }
 
-    }, [user, messages, roomCode, setUser, navigate])
+    }, [user, socket, messages, roomCode, setUser, navigate])
+
+    useEffect(()=>{
+        (async () => {
+            const res = await api.getMessagesFromRoom(user.token, roomCode)
+
+            if(res.hasError)
+                return navigate('/rooms');
+
+            setMessages(res)
+        })()
+    }, [roomCode, user.token, navigate])
 
     function sendMessage(e) {
         e.preventDefault()
-        user.socket.send(message)
+        socket.send(message)
         setMessage("")
     }
 
     function leaveRoom(e) {
         e.preventDefault()
-        user.socket.disconnect()
+        socket.disconnect()
 
         const newUser = {token: user.token, person: user.person}
         setUser(newUser)   
         localStorage.setItem('user', JSON.stringify(newUser))
     }
-
-    useEffect(()=>{
-        api.get(`/room/${roomCode}/message`, {
-            headers: {
-                Authorization: 'Bearer ' + user.token
-            }
-        })
-        .then((res) => {
-            setMessages(res.data.map(message => {
-                return {
-                    id: message.id,
-                    message: message.message,
-                    hour: message.hour,
-                    senderName: message.Sender.name,
-                    senderId: message.Sender.id
-                }
-            }))
-        })
-        .catch((err) => {
-            const message = err.response.data.message
-
-            if (message === "unauthorized" || message === "person not in a room")
-                return navigate('/rooms')
-        })
-    }, [roomCode, user.token, navigate])
 
     return (
         <div className={s['room']}>

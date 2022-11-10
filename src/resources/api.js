@@ -34,4 +34,34 @@ api.updateName = async (user, setUser, name) => {
         return hasError? {missingName}:false
 }
 
+
+api.getMessagesFromRoom = async (token, roomCode) => {
+    let res
+    try {
+        res = await api.get(`/room/${roomCode}/message`, {
+            headers: {
+                Authorization: 'Bearer ' + token
+            }
+        })
+        res = res.data.map(
+            message => {
+                return {
+                    id: message.id,
+                    message: message.message,
+                    hour: message.hour,
+                    senderName: message.Sender.name,
+                    senderId: message.Sender.id
+                }
+            }
+        )
+    }
+    catch (err) {
+        const message = err.response.data.message
+        res = {hasError:true, message} 
+    }
+    finally {
+        return res
+    }
+}
+
 export default api

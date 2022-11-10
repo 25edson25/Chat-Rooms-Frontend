@@ -43,14 +43,15 @@ function connectError(socket, states) {
 
 function messageResponse(states) {
     return function response (res) {
-        states.setMessages([...states.messages, res])
+        const newMessages = [...states.messages, res]
+        states.setMessages(newMessages)
     }
 }
 
 function addHandlers(socket, handlers) {
     for (let handler of handlers) {
-        console.log(handler.name)
-        socket.on(handler.name, handler)
+        console.log("adicionando handler: " + handler.name)
+        socket.once(handler.name, handler)
     }
 }
 

@@ -1,4 +1,5 @@
 import { io } from "socket.io-client"
+import disableClick from "../utils/disableClick"
 
 function connect(token, query) {
     return io(process.env.REACT_APP_API_URL, {
@@ -31,6 +32,8 @@ function hasEntered(socket, user, setUser, navigate, states) {
 function connectError(socket, states) {
     return function connect_error (err) {
         socket.disconnect()
+        states.setDisabled(false)
+        disableClick(states.button, states.div, false)
 
         if (err.message === "room name is required")
             return states.setMissingRoomName(true)

@@ -9,6 +9,7 @@ import Room from "../../components/room"
 import { useNavigate } from "react-router-dom"
 import LoadingMessage from "../../components/loadingMessage"
 import io from "../../resources/socket"
+import disableClick from "../../utils/disableClick"
 
 
 function Rooms () {
@@ -45,9 +46,11 @@ function Rooms () {
 
     function handleClick(room) {
         return async (e) => {
-            const button = e.currentTarget
-            button.disabled = true
+            e.preventDefault()
             setDisabled(true)
+            const button = document.getElementsByClassName(s['button'])[0].children[0]
+            const div = document.getElementsByClassName(s['rooms'])[0]
+            disableClick(button, div, true)
 
             const hasError = await api.updateName(user, setUser, name)
             if (hasError) {
@@ -74,7 +77,7 @@ function Rooms () {
                     password: roomPassword || null
                 })
             
-
+            
             io.addHandlers(socket, [
                 io.hasEntered(socket, user, setUser, navigate, {
                     name, roomPassword
@@ -82,7 +85,9 @@ function Rooms () {
                 io.connectError(socket, {
                     setMissingRoomName,
                     setRoomNotFound,
-                    setWrongPassword
+                    setWrongPassword,
+                    setDisabled,
+                    button, div
                 })
             ])
         }
@@ -133,11 +138,13 @@ function Rooms () {
                         />
                     </div>
                     <div className={s['button']}>
-                        <LoadingMessage visible={disabled}>
-                            Carregando...
-                        </LoadingMessage>
                         <button onClick={handleClick()}>Criar Sala</button>
                     </div>
+                </div>
+                <div className={s["loading"]}>
+                    <LoadingMessage visible={disabled}>
+                                Carregando...
+                    </LoadingMessage>
                 </div>
                 <div className={s['header']}>
                     <ErrorMessage visible={roomNotFound}>

@@ -21,6 +21,7 @@ function Room () {
     
     useEffect(()=>{
         if (socket) {
+            //  Há mensagens    ||    Se reconectou   || Entrou na sala pela 1º vez
             if (messages.length || !socket._callbacks || !socket._callbacks.$response)
                 io.addHandlers(socket, [
                     io.messageResponse({

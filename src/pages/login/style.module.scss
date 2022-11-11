@@ -13,12 +13,27 @@
 }
 
 .banner {
-    background-color: variables.$light-blue;
     grid-area: 2 / 1 / 3 / 2;
+    @media (max-width: 480px) {
+        display: none;
+    }
+    background-color: variables.$light-blue;
 }
 
-form {
+.main {
+    margin-left: 6rem;
+    margin-right: 2rem;
+    display: flex;
     grid-area: 2 / 2 / 3 / 3;
+
+    @media (max-width: 480px) {
+        grid-area: 2 / 1 / 3 / 3;
+        margin: 0;
+        justify-content: center;
+    }
+}
+
+.form {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -32,9 +47,7 @@ form {
 .label {
     display: flex;
     flex-direction: column;
-    margin: 2rem;
-    margin-bottom: 0rem;
-    margin-left: 6rem;
+    margin-top: 2rem;
     width: 20rem;
 }
 
@@ -54,8 +67,7 @@ form {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    margin: 2rem;
-    margin-left: 6rem;
+    margin-top: 2rem;
 }
 
 .text {

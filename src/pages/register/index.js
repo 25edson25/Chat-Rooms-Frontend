@@ -63,53 +63,55 @@ function Register () {
         <div className={s['container']}>
             <nav className={s['nav']}><NavBar page="register"/></nav>
             <div className={s['banner']}></div>
-            <form onSubmit={onSubmit}>
-                <span className={[s['label'], s['text']].join(' ')}>
-                    Registre-se
-                </span>
-                <div className={s['label']}>
-                    <ErrorMessage visible={missingName}>
-                        Campo obrigatório
-                    </ErrorMessage>
-                    <label>Nome de Usuário:</label>
-                    <input 
-                        type="text"
-                        onChange={(e)=>setName(e.target.value)}
-                        value={name}
-                    />
-                </div>
-                <div className={s['label']}>
-                    <ErrorMessage visible={missingEmail}>
-                        Campo obrigatório
-                    </ErrorMessage>
-                    <ErrorMessage visible={duplicatedEmail}>
-                        Email já em uso
-                    </ErrorMessage>
-                    <label>Email:</label>
-                    <input
-                        type="email"
-                        onChange={(e)=>setEmail(e.target.value)}
-                        value={email}
-                    />
-                </div>
-                <div className={s['label']}>
-                   <ErrorMessage visible={missingPassword}>
-                        Campo obrigatório
-                    </ErrorMessage>
-                    <label>Senha:</label>
-                    <input
-                        type="password"
-                        onChange={(e)=>setPassword(e.target.value)}
-                        value={password}
-                    />
-                </div>
-                <div className={s['button']}>
-                    <LoadingMessage visible={disabled}>
-                            Carregando...
-                    </LoadingMessage>
-                    <button>Cadastrar</button>
-                </div>
-            </form>
+            <div className={s['main']}>
+                <form className ={s['form']}onSubmit={onSubmit}>
+                    <span className={[s['label'], s['text']].join(' ')}>
+                        Registre-se
+                    </span>
+                    <div className={s['label']}>
+                        <ErrorMessage visible={missingName}>
+                            Campo obrigatório
+                        </ErrorMessage>
+                        <label>Nome de Usuário:</label>
+                        <input 
+                            type="text"
+                            onChange={(e)=>setName(e.target.value)}
+                            value={name}
+                        />
+                    </div>
+                    <div className={s['label']}>
+                        <ErrorMessage visible={missingEmail}>
+                            Campo obrigatório
+                        </ErrorMessage>
+                        <ErrorMessage visible={duplicatedEmail}>
+                            Email já em uso
+                        </ErrorMessage>
+                        <label>Email:</label>
+                        <input
+                            type="email"
+                            onChange={(e)=>setEmail(e.target.value)}
+                            value={email}
+                        />
+                    </div>
+                    <div className={s['label']}>
+                    <ErrorMessage visible={missingPassword}>
+                            Campo obrigatório
+                        </ErrorMessage>
+                        <label>Senha:</label>
+                        <input
+                            type="password"
+                            onChange={(e)=>setPassword(e.target.value)}
+                            value={password}
+                        />
+                    </div>
+                    <div className={s['button']}>
+                        <LoadingMessage visible={disabled}>
+                                Carregando...
+                        </LoadingMessage>
+                        <button>Cadastrar</button>
+                    </div>
+                </form>
+            </div>
             <footer className={s['footer']}><Footer/></footer>
         </div>
     )

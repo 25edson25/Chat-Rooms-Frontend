@@ -57,8 +57,10 @@ function Rooms () {
                 setMissingName(hasError.missingName)
 
                 setDisabled(false)
+                disableClick(button, div, false)
                 return;
             }
+            setMissingName(false)
 
             let socket
             if (!room)

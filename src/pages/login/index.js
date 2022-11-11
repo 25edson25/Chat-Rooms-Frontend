@@ -56,46 +56,48 @@ function Login () {
         <div className={s["container"]}>
             <nav className={s['nav']}><NavBar page='login'/></nav>
             <div className={s['banner']}></div>
-            <form onSubmit={onSubmit}>
-                <span className={[s['label'], s['text']].join(' ')}>
-                    Login
-                </span>
-                <div className={s['label']}>
-                    <ErrorMessage visible={notFound}>
-                        Usuário não encontrado
-                    </ErrorMessage>
-                    <label>Email:</label>
-                    <input
-                        type="email"
-                        onChange={(e)=>setEmail(e.target.value)}
-                        value={email}
-                    />
-                </div>
-                <div className={s['label']}>
-                    <ErrorMessage visible={wrongPassword}>
-                        Senha Incorreta
-                    </ErrorMessage>
-                    <label>Senha:</label>
-                    <input
-                        type="password"
-                        onChange={(e)=>setPassword(e.target.value)}
-                        value={password}
-                    />
-                </div>
-                <div className={s['confirm']}>
-                    <ErrorMessage visible={unknownError}>
-                        Erro Desconhecido
-                    </ErrorMessage>
-                    <LoadingMessage visible={disabled}>
-                        Carregando...
-                    </LoadingMessage>
-                    <button
-                        className={s['button']}
-                    >
-                        Entrar
-                    </button>
-                </div>
-            </form>
+            <div className={s['main']}>
+                <form className={s['form']} onSubmit={onSubmit}>
+                    <span className={[s['label'], s['text']].join(' ')}>
+                        Login
+                    </span>
+                    <div className={s['label']}>
+                        <ErrorMessage visible={notFound}>
+                            Usuário não encontrado
+                        </ErrorMessage>
+                        <label>Email:</label>
+                        <input
+                            type="email"
+                            onChange={(e)=>setEmail(e.target.value)}
+                            value={email}
+                        />
+                    </div>
+                    <div className={s['label']}>
+                        <ErrorMessage visible={wrongPassword}>
+                            Senha Incorreta
+                        </ErrorMessage>
+                        <label>Senha:</label>
+                        <input
+                            type="password"
+                            onChange={(e)=>setPassword(e.target.value)}
+                            value={password}
+                        />
+                    </div>
+                    <div className={s['confirm']}>
+                        <ErrorMessage visible={unknownError}>
+                            Erro Desconhecido
+                        </ErrorMessage>
+                        <LoadingMessage visible={disabled}>
+                            Carregando...
+                        </LoadingMessage>
+                        <button
+                            className={s['button']}
+                        >
+                            Entrar
+                        </button>
+                    </div>
+                </form>
+            </div>
             <footer className={s['footer']}><Footer/></footer>
         </div>
     )

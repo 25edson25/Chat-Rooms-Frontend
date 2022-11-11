@@ -97,10 +97,10 @@ function Rooms () {
 
     return (
         <div className={s["container"]}>
-            <nav><NavBar page='rooms'/></nav>
+            <nav className={s['nav']}><NavBar page='rooms'/></nav>
             <div className={s['left']}></div>
             <main className={s['main']}>
-                <div className={s['form']}>
+                <form className={s['form']}>
                     <div className={s['label']}>
                         <ErrorMessage visible={missingName}>
                             Campo obrigatório
@@ -142,7 +142,7 @@ function Rooms () {
                     <div className={s['button']}>
                         <button onClick={handleClick()}>Criar Sala</button>
                     </div>
-                </div>
+                </form>
                 <div className={s["loading"]}>
                     <LoadingMessage visible={disabled}>
                                 Carregando...

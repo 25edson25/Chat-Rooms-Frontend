@@ -8,7 +8,7 @@ import s from "./style.module.scss"
 import api from "../../resources/api"
 import io from "../../resources/socket"
 
-
+// Melhor deixar a div reverse mesmo?
 function Room () {
 
     const {roomCode} = useParams()
@@ -18,7 +18,7 @@ function Room () {
     const [socket, setSocket] = useState(user.socket)
     const hasReconnected = useRef(false)
     const navigate = useNavigate()
-    
+
     useEffect(()=>{
         if (socket) {
             //  Há mensagens    ||    Se reconectou   || Entrou na sala pela 1º vez
@@ -28,7 +28,15 @@ function Room () {
                         messages, setMessages
                     })
                 ])
+            
+            if (messages.length) {
+                const messageHeight = document.getElementsByClassName(s['message'])[0].offsetHeight
+                const chat = document.getElementsByClassName(s['chat'])[0]
 
+                if (chat.scrollHeight-(chat.clientHeight+chat.scrollTop) < 2*messageHeight)
+                    chat.scrollTop = chat.scrollHeight
+            }
+            
             if (hasReconnected.current) {
                 socket.emit('reconnected', user.person)
                 hasReconnected.current = false
@@ -85,10 +93,11 @@ function Room () {
                     <span className={s['empty']}/>
                 </div>
                 <div className={s['chat']}>
-                    {messages.slice(0).reverse().map((msg) => {
+                    {messages/*.slice(0).reverse()*/.map((msg) => {
                         return (
                             <div
                                 key={msg.id}
+                                id={msg.id}
                                 className={s['message']}
                             >
                                 <Message>

@@ -53,9 +53,8 @@
         max-height: 29.5rem;
     }
     border-radius: 2rem 2rem 0rem 0rem;
-    overflow-y: scroll;
-    display: flex;
-    flex-direction: column-reverse;
+    overflow-y: auto
+    
 }
 
 .input {
@@ -91,7 +90,8 @@
 }
 
 .message {
-    margin: 1rem;
+    margin: 0rem; 
+    //padding: 0.5rem;
 }
 
 .footer {

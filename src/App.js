@@ -14,6 +14,7 @@ import UserContext from "./context/user"
 function App() {
   
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')))
+  console.log(user)
 
   return (
     <UserContext.Provider value={{user, setUser}}>

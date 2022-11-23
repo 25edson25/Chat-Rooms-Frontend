@@ -12,6 +12,7 @@ function connect(token, query) {
 
 function hasEntered(socket, user, setUser, navigate, states) {
     return function has_entered (res) {
+        console.log("entrou na função hasEntered")
         const newUser = {
             token: user.token,
             person: {...user.person, name: states.name},
@@ -31,6 +32,7 @@ function hasEntered(socket, user, setUser, navigate, states) {
 
 function connectError(socket, states) {
     return function connect_error (err) {
+        console.log("entrou na connect_error, mensagem: " + err.message)
         socket.disconnect()
         states.setDisabled(false)
         disableClick(states.button, states.div, false)
@@ -46,6 +48,7 @@ function connectError(socket, states) {
 
 function messageResponse(states) {
     return function response (res) {
+        console.log("entrou na função messageResponse")
         const newMessages = [...states.messages, res]
         states.setMessages(newMessages)
     }

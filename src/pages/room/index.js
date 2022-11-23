@@ -8,7 +8,6 @@ import s from "./style.module.scss"
 import api from "../../resources/api"
 import io from "../../resources/socket"
 
-// Melhor deixar a div reverse mesmo?
 function Room () {
 
     const {roomCode} = useParams()

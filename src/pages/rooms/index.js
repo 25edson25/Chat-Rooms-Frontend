@@ -53,6 +53,8 @@ function Rooms () {
             disableClick(button, div, true)
 
             const hasError = await api.updateName(user, setUser, name)
+            console.log("atualizou o nome, retorno: ")
+            console.log(hasError)
             if (hasError) {
                 setMissingName(hasError.missingName)
 
@@ -61,7 +63,7 @@ function Rooms () {
                 return;
             }
             setMissingName(false)
-
+            console.log("conectar")
             let socket
             if (!room)
                 socket = io.connect(user.token,
@@ -79,7 +81,7 @@ function Rooms () {
                     password: roomPassword || null
                 })
             
-            
+            console.log("adicionando os handlers")
             io.addHandlers(socket, [
                 io.hasEntered(socket, user, setUser, navigate, {
                     name, roomPassword

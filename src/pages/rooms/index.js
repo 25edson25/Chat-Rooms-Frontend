@@ -52,9 +52,8 @@ function Rooms () {
             const div = document.getElementsByClassName(s['rooms'])[0]
             disableClick(button, div, true)
 
+
             const hasError = await api.updateName(user, setUser, name)
-            console.log("atualizou o nome, retorno: ")
-            console.log(hasError)
             if (hasError) {
                 setMissingName(hasError.missingName)
 
@@ -63,26 +62,20 @@ function Rooms () {
                 return;
             }
             setMissingName(false)
-            console.log("conectar")
+
+
             let socket
-            if (!room)
-                socket = io.connect(user.token,
-                    roomPassword? {
-                        name: roomName,
-                        password: roomPassword
-                    }
-                    : {
-                        name: roomName
-                    }
-                )
-            else 
+            if (room)
                 socket = io.connect(user.token, {
                     code: room.code,
-                    password: roomPassword || null
+                    password: roomPassword
                 })
-            // Erro: talvez seja falta de sincronia aqui, o socket perde o sinal de hasEntered
-            // Solução: quando o callback for adicionado, emitir evento 'ok' e ouvir 'has_entered'
-            console.log("adicionando os handlers")
+            else 
+                socket = io.connect(user.token, {
+                        name: roomName,
+                        password: roomPassword
+                })
+
             io.addHandlers(socket, [
                 io.hasEntered(socket, user, setUser, navigate, {
                     name, roomPassword

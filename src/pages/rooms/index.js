@@ -80,7 +80,8 @@ function Rooms () {
                     code: room.code,
                     password: roomPassword || null
                 })
-            
+            // Erro: talvez seja falta de sincronia aqui, o socket perde o sinal de hasEntered
+            // Solução: quando o callback for adicionado, emitir evento 'ok' e ouvir 'has_entered'
             console.log("adicionando os handlers")
             io.addHandlers(socket, [
                 io.hasEntered(socket, user, setUser, navigate, {
@@ -94,6 +95,7 @@ function Rooms () {
                     button, div
                 })
             ])
+            socket.emit('callbacks_setted')
         }
     }
 
